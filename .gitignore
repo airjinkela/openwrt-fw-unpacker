@@ -1,0 +1,5 @@
+/build
+/test
+/main
+*.o
+*.a

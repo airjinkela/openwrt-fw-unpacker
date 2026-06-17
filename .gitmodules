@@ -1,0 +1,9 @@
+[submodule "libs/dtc"]
+	path = libs/dtc
+	url = https://git.kernel.org/pub/scm/utils/dtc/dtc.git
+[submodule "libs/libmd"]
+	path = libs/libmd
+	url = https://git.hadrons.org/cgit/libmd.git
+[submodule "libs/libtar"]
+	path = libs/libtar
+	url = https://repo.or.cz/libtar.git
