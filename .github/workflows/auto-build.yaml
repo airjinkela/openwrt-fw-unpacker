@@ -1,0 +1,30 @@
+name: autobuild
+
+on:
+  push:
+    branches: ["master"]
+  workflow_dispatch:
+
+env:
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      id: checkout
+      uses: actions/checkout@main
+      with:
+        submodules: true
+        fetch-depth: 0
+    - name: Build
+      run: |
+        make -j 3 || make -j1
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@main
+      with:
+        name: main
+        path: main
