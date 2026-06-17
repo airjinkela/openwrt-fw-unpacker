@@ -13,7 +13,7 @@ CFLAGS += -I$(BUILDDIR)/libs/include
 CFLAGS += -I$(SRCDIR)
 CFLAGS += -Wall
 
-LDFLAGS += -static -fno-link-libatomic 
+LDFLAGS += -static 
 LDFLAGS += -L$(BUILDDIR)/libs/lib
 LDFLAGS += -ltar -lfdt -lmd 
 #LDFLAGS += -Wl,-Bstatic -ltar -lfdt -lmd -Wl,-Bdynamic
