@@ -198,7 +198,7 @@ int extract_kernel(char *k_path)
 	{
 		strcpy(basedir, ".");
 	}
-	ret = snprintf(buf, sizeof(buf), "%s/%s.its", basedir, p+1);
+	ret = snprintf(buf, sizeof(buf), "%s/%s.its.tmp", basedir, p+1);
 	SNPCHK(buf, ret);
 
 	struct dt_info *dti;
@@ -242,28 +242,18 @@ int extract_kernel(char *k_path)
 				fprintf(stderr, "WARN: data property not found in %s\n", i_child->name);
 				continue;
 			}
-			ret = snprintf(buf, MAXPATHLEN_U, "%s/%s.dtb", basedir, i_child->name);
+			ret = snprintf(buf, MAXPATHLEN_U, "%s/%s.dtb.tmp", basedir, i_child->name);
 			SNPCHK(buf, ret);
 
 			if(save_property_data(buf, prop))
 				continue;
 			extract_device_tree_blob(buf);
-			// for (int i=0; i<8;i++)
-			// 	fprintf(stderr, "%02x", (unsigned char)prop->val.val[i]);
-			// fprintf(stderr, "\n");
 		}
 	}
 
 err:
 	return ret;
 }
-
-// int replace_property_data(struct property *old_prop, char *data, unsigned int dlen)
-// {
-// 
-// 
-// }
-
 
 int resum_hash(struct node *nd)
 {
