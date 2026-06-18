@@ -146,12 +146,12 @@ int extract_fw(char *fw_path, char *kernel_path, char *root_path)
 }
 
 int extract_device_tree_blob(char *dtb_path)
-{
+{ 
 	char buf[MAXPATHLEN_U];
 	struct dt_info *dti;
 	dti = dt_from_blob(dtb_path);
-	
-	strncpy(buf, dtb_path, strlen(dtb_path)-3);
+	  
+	strncpy(buf, dtb_path, strlen(dtb_path)-7);
 	strcat(buf, "dts");
 
 	FILE *outf = fopen(buf, "wb");
