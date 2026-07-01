@@ -44,7 +44,7 @@ $(LIBINSTALLDIR)/.libtar_stamp: | $(BUILDDIR) libtar_patch
 
 libtar_patch: $(LIBDIR)/libtar/.patched
 $(LIBDIR)/libtar/.patched:
-	cd $(LIBDIR)/libtar && patch -p1 < $(LIBDIR)/patches/fuck-glibc.patch
+	cd $(LIBDIR)/libtar && patch -p1 < $(LIBDIR)/patches/fix-libtar.patch
 	touch $(LIBDIR)/libtar/.patched
 
 main: libfdt libtar libmd $(OBJS)
