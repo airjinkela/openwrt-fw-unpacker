@@ -13,6 +13,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Init Build Env
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo apt update
+        sudo apt install musl-tools
+
+
     - name: Checkout Repository
       id: checkout
       uses: actions/checkout@main
@@ -22,7 +30,7 @@ jobs:
     - name: Build
       id: build
       run: |
-        make -j 3 || make -j1
+        make CC=musl-gcc -j 3 || make CC=musl-gcc -j1
         echo "status=success" >> $GITHUB_OUTPUT
 
     - name: Upload Artifacts
