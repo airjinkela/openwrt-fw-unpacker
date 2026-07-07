@@ -14,7 +14,7 @@ CFLAGS += -Wall
 
 LDFLAGS += -static 
 LDFLAGS += -L$(BUILDDIR)/libs/lib
-LDFLAGS += -ltar -lfdt -lmd -lyaml
+LDFLAGS += -ltar -lfdt -lmd 
 #LDFLAGS += -Wl,-Bstatic -ltar -lfdt -lmd -Wl,-Bdynamic
 
 all: main
@@ -54,13 +54,13 @@ $(LIBDIR)/libtar/.patched:
 	cd $(LIBDIR)/libtar && patch -p1 < $(LIBDIR)/patches/fix-libtar.patch
 	touch $(LIBDIR)/libtar/.patched
 
-main: libfdt libtar libmd $(OBJS)
+main: $(OBJS)
 	$(CC) $(OBJS) $(LDFLAGS) -o $@
 
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 
-$(BUILDDIR)/%.o: $(SRCDIR)/%.c | $(BUILDDIR)
+$(BUILDDIR)/%.o: $(SRCDIR)/%.c libfdt libtar libmd | $(BUILDDIR)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
