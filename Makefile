@@ -1,4 +1,3 @@
-
 BASEDIR=$(shell pwd)
 SRCDIR=$(BASEDIR)/src
 BUILDDIR=$(BASEDIR)/build
@@ -15,7 +14,7 @@ CFLAGS += -Wall
 
 LDFLAGS += -static 
 LDFLAGS += -L$(BUILDDIR)/libs/lib
-LDFLAGS += -ltar -lfdt -lmd 
+LDFLAGS += -ltar -lfdt -lmd -lyaml
 #LDFLAGS += -Wl,-Bstatic -ltar -lfdt -lmd -Wl,-Bdynamic
 
 all: main
@@ -23,21 +22,29 @@ all: main
 libmd: $(LIBINSTALLDIR)/.libmd_stamp
 $(LIBINSTALLDIR)/.libmd_stamp: | $(BUILDDIR)	
 	cd $(LIBDIR)/libmd && autoreconf -i -f
-	cd $(LIBDIR)/libmd && ./configure --enable-shared --prefix=$(LIBINSTALLDIR) 
+	cd $(LIBDIR)/libmd && ./configure CC=$(CC) CFLAGS='$(CFLAGS)' --enable-shared --prefix=$(LIBINSTALLDIR) 
 	make -C $(LIBDIR)/libmd 	
 	make -C $(LIBDIR)/libmd install
 	touch $(LIBINSTALLDIR)/.libmd_stamp
 
+libyaml: $(LIBINSTALLDIR)/.libyaml_stamp
+$(LIBINSTALLDIR)/.libyaml_stamp: | $(BUILDDIR)
+	cd $(LIBDIR)/libyaml && autoreconf -fvi
+	cd $(LIBDIR)/libyaml && ./configure CC=$(CC) CFLAGS='$(CFLAGS)' --enable-shared --prefix=$(LIBINSTALLDIR) 
+	make -C $(LIBDIR)/libyaml
+	make -C $(LIBDIR)/libyaml install
+	touch $(LIBINSTALLDIR)/.libyaml_stamp
+
 libfdt: $(LIBINSTALLDIR)/.libfdt_stamp
-$(LIBINSTALLDIR)/.libfdt_stamp: | $(BUILDDIR)
-	make -C $(LIBDIR)/dtc NO_PYTHON=1
-	make -C $(LIBDIR)/dtc install PREFIX=$(LIBINSTALLDIR)
+$(LIBINSTALLDIR)/.libfdt_stamp: libyaml | $(BUILDDIR)
+	make -C $(LIBDIR)/dtc NO_PYTHON=1 CC=$(CC) CFLAGS='$(CFLAGS)' libfdt
+	make -C $(LIBDIR)/dtc install-lib install-includes PREFIX=$(LIBINSTALLDIR)
 	touch $(LIBINSTALLDIR)/.libfdt_stamp
 
 libtar: $(LIBINSTALLDIR)/.libtar_stamp
 $(LIBINSTALLDIR)/.libtar_stamp: | $(BUILDDIR) libtar_patch 
 	cd $(LIBDIR)/libtar && autoreconf -i -f
-	cd $(LIBDIR)/libtar && ./configure --enable-shared --prefix=$(LIBINSTALLDIR) 
+	cd $(LIBDIR)/libtar && ./configure CC=$(CC) CFLAGS='$(CFLAGS)' --enable-shared --prefix=$(LIBINSTALLDIR) 
 	make -C $(LIBDIR)/libtar
 	make -C $(LIBDIR)/libtar install
 	touch $(LIBINSTALLDIR)/.libtar_stamp
@@ -59,8 +66,9 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.c | $(BUILDDIR)
 
 clean:
 	-rm -r $(BUILDDIR)
+	-cd $(LIBDIR)/libyaml && git restore . && git clean -dxf	
 	-cd $(LIBDIR)/libtar && git restore . && git clean -dxf	
 	-cd $(LIBDIR)/libmd && git restore . && git clean -dxf	
 	-cd $(LIBDIR)/dtc && git restore . && git clean -dxf	
 
-.PHONY: all clean libfdt libtar libmd libtar_patch
+.PHONY: all clean libyaml libfdt libtar libmd libtar_patch
