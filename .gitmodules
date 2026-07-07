@@ -7,6 +7,3 @@
 [submodule "libs/libtar"]
 	path = libs/libtar
 	url = https://repo.or.cz/libtar.git
-[submodule "libs/libyaml"]
-	path = libs/libyaml
-	url = https://github.com/yaml/libyaml.git

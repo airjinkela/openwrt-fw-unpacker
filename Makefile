@@ -27,16 +27,8 @@ $(LIBINSTALLDIR)/.libmd_stamp: | $(BUILDDIR)
 	make -C $(LIBDIR)/libmd install
 	touch $(LIBINSTALLDIR)/.libmd_stamp
 
-libyaml: $(LIBINSTALLDIR)/.libyaml_stamp
-$(LIBINSTALLDIR)/.libyaml_stamp: | $(BUILDDIR)
-	cd $(LIBDIR)/libyaml && autoreconf -fvi
-	cd $(LIBDIR)/libyaml && ./configure CC=$(CC) CFLAGS='$(CFLAGS)' --enable-shared --prefix=$(LIBINSTALLDIR) 
-	make -C $(LIBDIR)/libyaml
-	make -C $(LIBDIR)/libyaml install
-	touch $(LIBINSTALLDIR)/.libyaml_stamp
-
 libfdt: $(LIBINSTALLDIR)/.libfdt_stamp
-$(LIBINSTALLDIR)/.libfdt_stamp: libyaml | $(BUILDDIR)
+$(LIBINSTALLDIR)/.libfdt_stamp: | $(BUILDDIR)
 	make -C $(LIBDIR)/dtc NO_PYTHON=1 CC=$(CC) CFLAGS='$(CFLAGS)' libfdt
 	make -C $(LIBDIR)/dtc install-lib install-includes PREFIX=$(LIBINSTALLDIR)
 	touch $(LIBINSTALLDIR)/.libfdt_stamp
@@ -66,9 +58,8 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.c libfdt libtar libmd | $(BUILDDIR)
 
 clean:
 	-rm -r $(BUILDDIR)
-	-cd $(LIBDIR)/libyaml && git restore . && git clean -dxf	
 	-cd $(LIBDIR)/libtar && git restore . && git clean -dxf	
 	-cd $(LIBDIR)/libmd && git restore . && git clean -dxf	
 	-cd $(LIBDIR)/dtc && git restore . && git clean -dxf	
 
-.PHONY: all clean libyaml libfdt libtar libmd libtar_patch
+.PHONY: all clean libfdt libtar libmd libtar_patch
